@@ -114,7 +114,7 @@ mipIterations <- function(plotData, returnGgplots = FALSE,
       theme(strip.background = element_blank())
     if (!is.null(facets)) {
       # by default create a small plot for each region; always show all facets, even if empty
-      plot <- plot + facet_wrap(facets, drop = FALSE)
+      plot <- plot + facet_wrap(facets, scales = "free_y", drop = FALSE)
     }
     if (!is.null(color) & is.numeric(plotData[[color]])) {
       plot <- plot + scale_color_gradientn(colours = rainbow(5, v = 0.8))

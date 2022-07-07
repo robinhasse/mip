@@ -4,7 +4,7 @@
 \alias{getPlotData}
 \title{getPlotData}
 \usage{
-getPlotData(symbolName, pathToGdx = ".", ...)
+getPlotData(symbolName, pathToGdx = ".", ignoreIterationGdx = FALSE, ...)
 }
 \arguments{
 \item{symbolName}{The name of a symbol to be extracted from gdx.}
@@ -13,6 +13,8 @@ getPlotData(symbolName, pathToGdx = ".", ...)
 are provided each one represents data after a specific iteration. The order of paths should match
 iteration order, e.g. pathToGdx[1] should hold data for the first iteration, pathToGdx[2] for the
 second iteration etc. If the path to a folder is given the fulldata gdx files in it are used.}
+
+\item{ignoreIterationGdx}{Schould iterations with the names fulldata_*.gdx be ignored?}
 
 \item{...}{Additional arguments passed to gdxrrw::rgdx.}
 }

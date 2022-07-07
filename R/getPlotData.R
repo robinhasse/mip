@@ -7,6 +7,7 @@
 #'                   are provided each one represents data after a specific iteration. The order of paths should match
 #'                   iteration order, e.g. pathToGdx[1] should hold data for the first iteration, pathToGdx[2] for the
 #'                   second iteration etc. If the path to a folder is given the fulldata gdx files in it are used.
+#' @param ignoreIterationGdx Schould iterations with the names fulldata_*.gdx be ignored?
 #' @param ...        Additional arguments passed to gdxrrw::rgdx.
 #' @return A data frame with data from the given gdx file(s). If multiple gdx files are provided an additional
 #'         "iteration" column is added. The iteration value will be 1 for data rows from the first gdx, 2 for the second
@@ -14,7 +15,8 @@
 #' @author Pascal Führlich
 #' @seealso \code{\link{mipIterations}}, \code{\link{dataframeFromGdx}}
 #' @export
-getPlotData <- function(symbolName, pathToGdx = ".", ...) {
+getPlotData <- function(symbolName, pathToGdx = ".", ignoreIterationGdx = FALSE,
+                        ...) {
   stopifnot(
     length(symbolName) == 1,
     length(pathToGdx) > 0,
@@ -24,7 +26,7 @@ getPlotData <- function(symbolName, pathToGdx = ".", ...) {
 
   # if pathToGdx is path to a folder: set pathToGdx to the relevant fulldata gdx files in that folder
   if (length(pathToGdx) == 1 && !endsWith(pathToGdx, ".gdx")) {
-    gdxFiles <- Sys.glob(file.path(pathToGdx, "fulldata_*.gdx"))
+    gdxFiles <- Sys.glob(file.path(pathToGdx, "fulldata*.gdx"))
     if (length(gdxFiles) > 1) {
       fileNumber <- sub("fulldata_", "", basename(gdxFiles), fixed = TRUE)
       fileNumber <- sub(".gdx", "", fileNumber, fixed = TRUE)
@@ -36,11 +38,10 @@ getPlotData <- function(symbolName, pathToGdx = ".", ...) {
   }
 
   # read one or more gdx files
-  if (length(pathToGdx) == 1) {
-    plotData <- dataframeFromGdx(symbolName, pathToGdx, ...)
-  } else {
+  plotData <- dataframeFromGdx(symbolName, tail(pathToGdx, 1), ...)
+  if (length(pathToGdx) > 1 & !("iteration" %in% colnames(plotData)) & !ignoreIterationGdx) {
     plotData <- NULL
-    for (i in seq_along(pathToGdx)) {
+    for (i in seq_along(head(pathToGdx, -1))) {
       if (!grepl(paste0("[^0-9]0*", i, "[^0-9]"), pathToGdx[[i]])) {
         warning(
           'WARNING: "', pathToGdx[[i]], '" should contain data for iteration ', i,
